@@ -1,15 +1,15 @@
 package com.warabak.appointmentscheduler.controllers;
 
-import com.warabak.appointmentscheduler.models.Status;
+import com.warabak.appointmentscheduler.models.Health;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class StatusController {
+public class HealthController {
 
-    @GetMapping("/status")
-    public Status getStatus() {
-        return Status.green();
+    @GetMapping("/health")
+    public Health getHealth() {
+        return Health.green();
     }
 
 }
