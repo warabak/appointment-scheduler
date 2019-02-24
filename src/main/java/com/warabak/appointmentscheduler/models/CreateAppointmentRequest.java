@@ -3,7 +3,7 @@ package com.warabak.appointmentscheduler.models;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import javax.validation.constraints.Future;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -43,7 +43,13 @@ public class CreateAppointmentRequest {
         @JsonProperty final String status,
         @JsonProperty final String price
     ) {
-        this.scheduledDate = ZonedDateTime.parse(scheduledDate);
+        try {
+            this.scheduledDate = ZonedDateTime.parse(scheduledDate);
+        } catch (DateTimeParseException e) {
+            throw new IllegalArgumentException(
+                "The format of scheduledDate must be ISO-8601 with an offset. For example : 2011-12-03T10:15:30+01:00"
+            );
+        }
         this.durationInMinutes = durationInMinutes;
         this.doctorFullName = doctorFullName;
         this.status = status;
