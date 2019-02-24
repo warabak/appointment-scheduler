@@ -1,6 +1,5 @@
 package com.warabak.appointmentscheduler;
 
-import com.warabak.appointmentscheduler.controllers.AppointmentController;
 import com.warabak.appointmentscheduler.models.AppointmentResponse;
 import com.warabak.appointmentscheduler.models.CreateAppointmentRequest;
 import com.warabak.appointmentscheduler.services.AppointmentFaker;
@@ -9,7 +8,6 @@ import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -29,9 +27,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ExtendWith(SpringExtension.class)
 @Sql(scripts = "classpath:truncate_appointments.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 class AppointmentControllerTests {
-
-    @Autowired
-    private AppointmentController appointmentController;
 
     @LocalServerPort
     private int port;
@@ -140,7 +135,6 @@ class AppointmentControllerTests {
         Assertions.assertNotNull(findResponse);
         Assertions.assertEquals(createResponse, findResponse);
     }
-
 
     @Test
     void canDeleteNewAppointment() {
