@@ -2,6 +2,7 @@ package com.warabak.appointmentscheduler.services;
 
 import com.github.javafaker.Faker;
 import com.warabak.appointmentscheduler.models.CreateAppointmentRequest;
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -63,7 +64,7 @@ public class AppointmentFaker {
         final Integer durationInMinutes = generateInteger(minDuration, maxDuration, durationIncrementSize);
         final String doctorFullName = faker.name().fullName();
         final String status = chooseOne(statuses);
-        final String price = String.valueOf(faker.number().randomDouble(2, minPrice, maxPrice));
+        final BigDecimal price = new BigDecimal(faker.number().randomDouble(2, minPrice, maxPrice));
 
         return new CreateAppointmentRequest(scheduledDate, durationInMinutes, doctorFullName, status, price);
     }

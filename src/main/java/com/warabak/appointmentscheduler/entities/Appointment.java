@@ -1,5 +1,6 @@
 package com.warabak.appointmentscheduler.entities;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -39,7 +40,7 @@ public class Appointment {
     private Status status;
 
     @Column(name = "price")
-    private String price;
+    private BigDecimal price;
 
     // JPA requires a default constructor - we'll need to keep the getters / setters to satisfy it
     public Appointment() {
@@ -51,7 +52,7 @@ public class Appointment {
         final Integer durationInMinutes,
         final String doctorFullName,
         final Status status,
-        final String price
+        final BigDecimal price
     ) {
         this.createdAt = Instant.now().atZone(ZoneOffset.UTC);
         this.scheduledDate = scheduledDate;
@@ -109,11 +110,11 @@ public class Appointment {
         this.status = status;
     }
 
-    public String getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(final String price) {
+    public void setPrice(final BigDecimal price) {
         this.price = price;
     }
 }
