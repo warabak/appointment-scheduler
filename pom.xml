@@ -26,6 +26,7 @@
         <spring-test.version>5.1.5.RELEASE</spring-test.version>
         <postgresql.version>42.2.5</postgresql.version>
         <flyway-core.version>5.2.4</flyway-core.version>
+        <jacoco.version>0.7.6.201602180812</jacoco.version>
     </properties>
 
     <dependencies>
@@ -82,6 +83,7 @@
 
     <build>
         <plugins>
+
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
@@ -96,6 +98,20 @@
                 <groupId>org.eluder.coveralls</groupId>
                 <artifactId>coveralls-maven-plugin</artifactId>
                 <version>4.3.0</version>
+            </plugin>
+
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco.version}</version>
+                <executions>
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
