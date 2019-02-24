@@ -29,6 +29,7 @@ public class AppointmentService {
             .findOne(Example.of(new Status(request.status)))
             .orElseThrow(() -> new IllegalArgumentException(String.format("Unknown status %s", request.status)));
 
+        // TODO : Ensure all datetimes are in UTC
         final Appointment appointment = new Appointment(
             request.scheduledDate,
             request.durationInMinutes,

@@ -37,19 +37,13 @@ public class CreateAppointmentRequest {
 
     @JsonCreator
     public CreateAppointmentRequest(
-        @JsonProperty final String scheduledDate,
+        @JsonProperty final ZonedDateTime scheduledDate,
         @JsonProperty final Integer durationInMinutes,
         @JsonProperty final String doctorFullName,
         @JsonProperty final String status,
         @JsonProperty final String price
     ) {
-        try {
-            this.scheduledDate = ZonedDateTime.parse(scheduledDate);
-        } catch (DateTimeParseException e) {
-            throw new IllegalArgumentException(
-                "The format of scheduledDate must be ISO-8601 with an offset. For example : 2011-12-03T10:15:30+01:00"
-            );
-        }
+        this.scheduledDate = scheduledDate;
         this.durationInMinutes = durationInMinutes;
         this.doctorFullName = doctorFullName;
         this.status = status;

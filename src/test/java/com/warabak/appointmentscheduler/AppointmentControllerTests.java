@@ -43,7 +43,7 @@ class AppointmentControllerTests {
         final ZonedDateTime now = Instant.now().atZone(ZoneOffset.UTC);
         final ZonedDateTime oneDayFromNow = now.plus(1, ChronoUnit.DAYS);
 
-        final CreateAppointmentRequest request = new CreateAppointmentRequest(oneDayFromNow.toString(), 60, "Dr. Shelby Jahns", "Available", "100.01");
+        final CreateAppointmentRequest request = new CreateAppointmentRequest(oneDayFromNow, 60, "Dr. Shelby Jahns", "Available", "100.01");
         final ResponseEntity<AppointmentResponse> httpResponse = this.restTemplate.postForEntity(getUrl(), request, AppointmentResponse.class);
 
         Assertions.assertTrue(httpResponse.getStatusCode().is2xxSuccessful(), String.valueOf(httpResponse.getStatusCodeValue()));
