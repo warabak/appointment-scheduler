@@ -3,6 +3,7 @@ package com.warabak.appointmentscheduler.models;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import javax.validation.constraints.Future;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -36,13 +37,13 @@ public class CreateAppointmentRequest {
 
     @JsonCreator
     public CreateAppointmentRequest(
-        @JsonProperty final ZonedDateTime scheduledDate,
+        @JsonProperty final String scheduledDate,
         @JsonProperty final Integer durationInMinutes,
         @JsonProperty final String doctorFullName,
         @JsonProperty final String status,
         @JsonProperty final String price
     ) {
-        this.scheduledDate = scheduledDate;
+        this.scheduledDate = ZonedDateTime.parse(scheduledDate);
         this.durationInMinutes = durationInMinutes;
         this.doctorFullName = doctorFullName;
         this.status = status;

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.ZonedDateTime;
 
-public class CreateAppointmentResponse {
+public class AppointmentResponse {
 
     public final Long id;
     public final ZonedDateTime createdAt;
@@ -15,7 +15,7 @@ public class CreateAppointmentResponse {
     public final String price;
 
     @JsonCreator
-    public CreateAppointmentResponse(
+    public AppointmentResponse(
         @JsonProperty final Long id,
         @JsonProperty final ZonedDateTime createdAt,
         @JsonProperty final ZonedDateTime scheduledDate,

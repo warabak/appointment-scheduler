@@ -2,7 +2,7 @@ package com.warabak.appointmentscheduler;
 
 import com.warabak.appointmentscheduler.controllers.AppointmentController;
 import com.warabak.appointmentscheduler.models.CreateAppointmentRequest;
-import com.warabak.appointmentscheduler.models.CreateAppointmentResponse;
+import com.warabak.appointmentscheduler.models.AppointmentResponse;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -43,12 +43,12 @@ class AppointmentControllerTests {
         final ZonedDateTime now = Instant.now().atZone(ZoneOffset.UTC);
         final ZonedDateTime oneDayFromNow = now.plus(1, ChronoUnit.DAYS);
 
-        final CreateAppointmentRequest request = new CreateAppointmentRequest(oneDayFromNow, 60, "Dr. Shelby Jahns", "Available", "100.01");
-        final ResponseEntity<CreateAppointmentResponse> httpResponse = this.restTemplate.postForEntity(getUrl(), request, CreateAppointmentResponse.class);
+        final CreateAppointmentRequest request = new CreateAppointmentRequest(oneDayFromNow.toString(), 60, "Dr. Shelby Jahns", "Available", "100.01");
+        final ResponseEntity<AppointmentResponse> httpResponse = this.restTemplate.postForEntity(getUrl(), request, AppointmentResponse.class);
 
         Assertions.assertTrue(httpResponse.getStatusCode().is2xxSuccessful(), String.valueOf(httpResponse.getStatusCodeValue()));
 
-        final CreateAppointmentResponse response = httpResponse.getBody();
+        final AppointmentResponse response = httpResponse.getBody();
 
         Assertions.assertNotNull(response);
         Assertions.assertNotNull(response.id);
@@ -63,6 +63,6 @@ class AppointmentControllerTests {
     // TODO : Implement some negative tests to exercise @Validate
 
     private String getUrl() {
-        return String.format("http://localhost:%s/appointment", this.port);
+        return String.format("http://localhost:%s/appointments", this.port);
     }
 }

@@ -1,24 +1,37 @@
 package com.warabak.appointmentscheduler.controllers;
 
 import com.warabak.appointmentscheduler.models.CreateAppointmentRequest;
-import com.warabak.appointmentscheduler.models.CreateAppointmentResponse;
+import com.warabak.appointmentscheduler.models.AppointmentResponse;
 import com.warabak.appointmentscheduler.services.AppointmentService;
+import java.util.List;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/appointment")
+@RequestMapping("/appointments")
 public class AppointmentController {
 
     @Autowired
     private AppointmentService appointmentService;
 
     @PostMapping
-    public CreateAppointmentResponse create(@Valid @RequestBody CreateAppointmentRequest request) {
+    public AppointmentResponse create(@Valid @RequestBody final CreateAppointmentRequest request) {
         return appointmentService.create(request);
+    }
+
+    @GetMapping
+    public List<AppointmentResponse> list() {
+        return appointmentService.list();
+    }
+
+    @GetMapping("/{id}")
+    public AppointmentResponse find(@PathVariable final Long id) {
+        return appointmentService.find(id);
     }
 }

@@ -3,10 +3,12 @@ package com.warabak.appointmentscheduler.services;
 import com.warabak.appointmentscheduler.entities.Appointment;
 import com.warabak.appointmentscheduler.entities.Status;
 import com.warabak.appointmentscheduler.models.CreateAppointmentRequest;
-import com.warabak.appointmentscheduler.models.CreateAppointmentResponse;
+import com.warabak.appointmentscheduler.models.AppointmentResponse;
 import com.warabak.appointmentscheduler.repos.AppointmentRepository;
 import com.warabak.appointmentscheduler.repos.StatusRepository;
-import java.util.Optional;
+import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
@@ -20,7 +22,7 @@ public class AppointmentService {
     @Autowired
     private StatusRepository statusRepository;
 
-    public CreateAppointmentResponse create(final CreateAppointmentRequest request) {
+    public AppointmentResponse create(final CreateAppointmentRequest request) {
 
         // Find the requested status - if it doesn't exist, we will not move forward.
         final Status status = statusRepository
@@ -36,17 +38,36 @@ public class AppointmentService {
         );
 
         // Persist to the database
-        final Appointment saved = appointmentRepository.save(appointment);
+        return from(appointmentRepository.save(appointment));
+    }
 
-        return new CreateAppointmentResponse(
-            saved.getId(),
-            saved.getCreatedAt(),
-            saved.getScheduledDate(),
-            saved.getDurationInMinutes(),
-            saved.getDoctorFullName(),
-            saved.getStatus().getStatus(),
-            saved.getPrice()
+    public List<AppointmentResponse> list() {
+        return appointmentRepository
+            .findAll()
+            .stream()
+            .map(AppointmentService::from)
+            .collect(Collectors.toList());
+    }
+
+    public AppointmentResponse find(final Long id) {
+        return from(
+            appointmentRepository
+                .findById(id)
+                .orElseThrow(() -> new IllegalArgumentException(String.format("Unknown id %s", id)))
         );
     }
+
+    private static AppointmentResponse from(final Appointment appointment) {
+        return new AppointmentResponse(
+            appointment.getId(),
+            appointment.getCreatedAt(),
+            appointment.getScheduledDate(),
+            appointment.getDurationInMinutes(),
+            appointment.getDoctorFullName(),
+            appointment.getStatus().getStatus(),
+            appointment.getPrice()
+        );
+    }
+
 
 }
