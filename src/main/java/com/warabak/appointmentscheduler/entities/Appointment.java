@@ -1,5 +1,7 @@
 package com.warabak.appointmentscheduler.entities;
 
+import java.time.Instant;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,7 +12,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.validation.constraints.Digits;
 
 @Entity
 @Table(name = "appointments")
@@ -18,13 +19,13 @@ public class Appointment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", updatable = false, nullable = false)
+    @Column(name = "id", updatable = false)
     private Long id;
 
-    @Column(name = "created_at", updatable = false, nullable = false)
+    @Column(name = "created_at", updatable = false)
     private ZonedDateTime createdAt;
 
-    @Column(name = "appointment_date", nullable = false)
+    @Column(name = "appointment_date")
     private ZonedDateTime scheduledDate;
 
     @Column(name = "appointment_duration")
@@ -34,15 +35,31 @@ public class Appointment {
     private String doctorFullName;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "status_id", nullable = false)
+    @JoinColumn(name = "status_id")
     private Status status;
 
-    // We will opt to only store in USD, forcing a precision down to the penny.
-    // If we want to accept alternative currencies (even crypto currencies, where the precision might be far beyond two decimal places), prefer the use of outer
-    // services to convert to a canonical representation (USD) before storing in the database.
-    @Digits(integer = 1_000_000_000, fraction = 2)
-    @Column(name = "price", nullable = false)
+    @Column(name = "price")
     private String price;
+
+    // JPA requires a default constructor - we'll need to keep the getters / setters to satisfy it
+    public Appointment() {
+    }
+
+    // Generally, prefer using a constructor where possible so we don't accidentally miss invoking a requisite setter
+    public Appointment(
+        final ZonedDateTime scheduledDate,
+        final Integer durationInMinutes,
+        final String doctorFullName,
+        final Status status,
+        final String price
+    ) {
+        this.createdAt = Instant.now().atZone(ZoneOffset.UTC);
+        this.scheduledDate = scheduledDate;
+        this.durationInMinutes = durationInMinutes;
+        this.doctorFullName = doctorFullName;
+        this.status = status;
+        this.price = price;
+    }
 
     public Long getId() {
         return id;
@@ -72,7 +89,7 @@ public class Appointment {
         return durationInMinutes;
     }
 
-    public void setDuration(final Integer durationInMinutes) {
+    public void setDurationInMinutes(final Integer durationInMinutes) {
         this.durationInMinutes = durationInMinutes;
     }
 

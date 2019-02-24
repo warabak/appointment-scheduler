@@ -26,6 +26,15 @@ public class Status {
     @OneToMany(mappedBy = "status", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Appointment> appointments;
 
+    // JPA requires a default constructor - we'll need to keep the getters / setters to satisfy it
+    public Status() {
+    }
+
+    // Generally, prefer using a constructor where possible so we don't accidentally miss invoking a requisite setter
+    public Status(final String status) {
+        this.status = status;
+    }
+
     public Long getId() {
         return id;
     }

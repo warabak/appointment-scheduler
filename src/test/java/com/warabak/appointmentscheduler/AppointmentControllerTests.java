@@ -60,6 +60,8 @@ class AppointmentControllerTests {
         Assertions.assertEquals(request.status, response.status);
     }
 
+    // TODO : Implement some negative tests to exercise @Validate
+
     private String getUrl() {
         return String.format("http://localhost:%s/appointment", this.port);
     }
