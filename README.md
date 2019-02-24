@@ -66,10 +66,10 @@ If all goes well, you will see the Dockerfile being built at the very end of the
 [INFO] ------------------------------------------------------------------------
 ```
 
-To run the freshly built image :
+To run the freshly built image, using an embedded H2 database :
 
 ```bash
-docker run -p 8080:8080 nwarabak/appointment-scheduler:1.0
+docker run -p 8080:8080 -e "SPRING_PROFILES_ACTIVE=h2" nwarabak/appointment-scheduler:1.0
 ```
 
 And verify you can hit the application's _/health_ endpoint

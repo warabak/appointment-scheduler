@@ -23,7 +23,7 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ActiveProfiles("test")
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, classes = LocalApplication.class)
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, classes = Application.class)
 @ExtendWith(SpringExtension.class)
 @Sql(scripts = "classpath:truncate_appointments.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 class AppointmentControllerTests {

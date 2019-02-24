@@ -88,11 +88,6 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-
-                <!-- Tell Spring to use RemoteApplication as our "real" production application, as opposed to LocalApplication -->
-                <configuration>
-                    <mainClass>com.warabak.appointmentscheduler.RemoteApplication</mainClass>
-                </configuration>
             </plugin>
 
             <!-- Use Spotify's Maven Dockerfile Plugin to help manage building the image -->
