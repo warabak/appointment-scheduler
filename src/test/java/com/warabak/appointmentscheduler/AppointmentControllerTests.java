@@ -4,10 +4,12 @@ import com.warabak.appointmentscheduler.controllers.AppointmentController;
 import com.warabak.appointmentscheduler.models.AppointmentResponse;
 import com.warabak.appointmentscheduler.models.CreateAppointmentRequest;
 import com.warabak.appointmentscheduler.services.AppointmentFaker;
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -102,6 +104,43 @@ class AppointmentControllerTests {
         Assertions.assertNotNull(findResponse);
         Assertions.assertEquals(createResponse, findResponse);
     }
+
+    @Test
+    void canFindNewAppointmentWithoutLosingPricePrecision() {
+        final ZonedDateTime scheduledDate = Instant.now().atZone(ZoneOffset.UTC).plus(1, ChronoUnit.DAYS);
+        final Integer durationInMinutes = 15;
+        final String doctorFullName = "Dr. Shelby Jahns";
+        final String status = "Available";
+
+        // We're testing whether querying this back from the DB causes this value to lose precision - that is, do we get back `50.5` after querying
+        final BigDecimal price = new BigDecimal("50.5");
+
+        final CreateAppointmentRequest request = new CreateAppointmentRequest(
+            scheduledDate,
+            durationInMinutes,
+            doctorFullName,
+            status,
+            price
+        );
+
+        // Create a new appointment
+        final ResponseEntity<AppointmentResponse> createHttpResponse = restTemplate.postForEntity(getUrl(), request, AppointmentResponse.class);
+        Assertions.assertTrue(createHttpResponse.getStatusCode().is2xxSuccessful(), String.valueOf(createHttpResponse.getStatusCodeValue()));
+
+        final AppointmentResponse createResponse = createHttpResponse.getBody();
+        Assertions.assertNotNull(createResponse);
+        Assertions.assertNotNull(createResponse.id);
+
+        // Find the newly created appointment by its ID
+        final String findAppointmentUrl = String.format("%s/%s", getUrl(), createResponse.id);
+        final ResponseEntity<AppointmentResponse> findHttpResponse = restTemplate.getForEntity(findAppointmentUrl, AppointmentResponse.class);
+        Assertions.assertTrue(findHttpResponse.getStatusCode().is2xxSuccessful(), String.valueOf(findHttpResponse.getStatusCodeValue()));
+
+        final AppointmentResponse findResponse = findHttpResponse.getBody();
+        Assertions.assertNotNull(findResponse);
+        Assertions.assertEquals(createResponse, findResponse);
+    }
+
 
     @Test
     void canDeleteNewAppointment() {

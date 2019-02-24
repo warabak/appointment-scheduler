@@ -2,6 +2,7 @@ package com.warabak.appointmentscheduler.models;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -14,7 +15,7 @@ public class AppointmentResponse {
     public final Integer durationInMinutes;
     public final String doctorFullName;
     public final String status;
-    public final String price;
+    public final BigDecimal price;
 
     @JsonCreator
     public AppointmentResponse(
@@ -24,7 +25,7 @@ public class AppointmentResponse {
         @JsonProperty final Integer durationInMinutes,
         @JsonProperty final String doctorFullName,
         @JsonProperty final String status,
-        @JsonProperty final String price
+        @JsonProperty final BigDecimal price
     ) {
         this.id = id;
         this.createdAt = createdAt;
