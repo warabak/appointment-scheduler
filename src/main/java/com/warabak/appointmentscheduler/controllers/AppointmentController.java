@@ -6,6 +6,7 @@ import com.warabak.appointmentscheduler.services.AppointmentService;
 import java.util.List;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -39,5 +40,10 @@ public class AppointmentController {
     @PutMapping("/{id}/{status}")
     public AppointmentResponse update(@PathVariable final Long id, @PathVariable final String status) {
         return appointmentService.update(id, status);
+    }
+
+    @DeleteMapping("/{id}")
+    public AppointmentResponse delete(@PathVariable final Long id) {
+        return appointmentService.delete(id);
     }
 }

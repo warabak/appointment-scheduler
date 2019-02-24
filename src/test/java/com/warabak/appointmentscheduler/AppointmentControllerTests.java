@@ -104,6 +104,27 @@ class AppointmentControllerTests {
         Assertions.assertEquals(createResponse, findResponse);
     }
 
+    @Test
+    void canDeleteNewAppointment() {
+        final CreateAppointmentRequest request = appointmentFaker.create();
+
+        // Create a new appointment
+        final ResponseEntity<AppointmentResponse> createHttpResponse = restTemplate.postForEntity(getUrl(), request, AppointmentResponse.class);
+        Assertions.assertTrue(createHttpResponse.getStatusCode().is2xxSuccessful(), String.valueOf(createHttpResponse.getStatusCodeValue()));
+
+        final AppointmentResponse createResponse = createHttpResponse.getBody();
+        Assertions.assertNotNull(createResponse);
+        Assertions.assertNotNull(createResponse.id);
+
+        // Delete created appointment by its ID
+        restTemplate.delete(String.format("%s/%s", getUrl(), createResponse.id));
+
+        // Find the newly created appointment by its ID
+        final String findAppointmentUrl = String.format("%s/%s", getUrl(), createResponse.id);
+        final ResponseEntity<AppointmentResponse> findHttpResponse = restTemplate.getForEntity(findAppointmentUrl, AppointmentResponse.class);
+        Assertions.assertTrue(findHttpResponse.getStatusCode().isError());
+    }
+
     // TODO : Implement some negative tests to exercise @Validate
 
     private String getUrl() {
