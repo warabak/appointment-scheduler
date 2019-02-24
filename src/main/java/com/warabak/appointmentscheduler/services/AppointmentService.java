@@ -6,6 +6,7 @@ import com.warabak.appointmentscheduler.models.AppointmentResponse;
 import com.warabak.appointmentscheduler.models.CreateAppointmentRequest;
 import com.warabak.appointmentscheduler.repos.AppointmentRepository;
 import com.warabak.appointmentscheduler.repos.StatusRepository;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +41,7 @@ public class AppointmentService {
     }
 
     public List<AppointmentResponse> list() {
-        return this.appointmentRepository
+        return appointmentRepository
             .findAll()
             .stream()
             .map(AppointmentService::from)
@@ -49,7 +50,7 @@ public class AppointmentService {
 
     public AppointmentResponse find(final Long id) {
         return from(
-            this.appointmentRepository
+            appointmentRepository
                 .findById(id)
                 .orElseThrow(() -> new IllegalArgumentException(String.format("Unknown id %s", id)))
         );
@@ -58,17 +59,36 @@ public class AppointmentService {
     public AppointmentResponse update(final Long id, final String status) {
 
         // Find the requested appointment by ID - if it doesn't exist, we cannot update it
-        final Appointment foundAppointment = this.appointmentRepository
+        final Appointment foundAppointment = appointmentRepository
             .findById(id)
             .orElseThrow(() -> new IllegalArgumentException(String.format("Unknown id %s", id)));
 
         foundAppointment.setStatus(findStatus(status));
 
-        return from(this.appointmentRepository.save(foundAppointment));
+        return from(appointmentRepository.save(foundAppointment));
+    }
+
+    public AppointmentResponse delete(final Long id) {
+
+        // Find the requested appointment by ID - if it doesn't exist, we cannot update it
+        final Appointment foundAppointment = appointmentRepository
+            .findById(id)
+            .orElseThrow(() -> new IllegalArgumentException(String.format("Unknown id %s", id)));
+
+        appointmentRepository.delete(foundAppointment);
+
+        return from(foundAppointment);
+    }
+
+    public List<AppointmentResponse> search(final ZonedDateTime start, final ZonedDateTime end) {
+        return appointmentRepository.findByScheduledDateBetweenOrderByPriceDesc(start, end)
+            .stream()
+            .map(AppointmentService::from)
+            .collect(Collectors.toList());
     }
 
     public Status findStatus(final String status) {
-        return this.statusRepository
+        return statusRepository
             .findOne(Example.of(new Status(status)))
             .orElseThrow(() -> new IllegalArgumentException(String.format("Unknown status %s", status)));
     }
@@ -84,6 +104,5 @@ public class AppointmentService {
             appointment.getPrice()
         );
     }
-
 
 }
