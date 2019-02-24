@@ -1,4 +1,4 @@
-version: '2.1'
+version: '3.7'
 
 services:
   api:
@@ -10,24 +10,20 @@ services:
     networks:
       - default
     depends_on:
-      db:
-        condition: service_healthy
+      - db
   db:
-    image: debezium/postgres:10.0
+    image: postgres:10
     environment:
       - POSTGRES_USER=opensesame
       - POSTGRES_PASSWORD=opensesame
       - POSTGRES_DB=appointmentdb
     ports:
       - 5432:5432
-    volumes:
-      - ./data/postgres:/var/lib/postgresql/data
-
     # https://www.postgresql.org/docs/10/app-pg-isready.html
     # https://github.com/peter-evans/docker-compose-healthcheck
     # https://github.com/peter-evans/docker-compose-healthcheck/blob/master/docker-compose.yml
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ["CMD-SHELL", "pg_isready -U opensesame -d appointmentdb -p 5432"]
       interval: 5s
       timeout: 5s
       retries: 3
