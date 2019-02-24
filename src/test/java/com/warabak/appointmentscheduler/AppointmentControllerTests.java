@@ -64,7 +64,7 @@ class AppointmentControllerTests {
     }
 
     @Test
-    void canListNewAppointment() {
+    void canListNewAppointments() {
         final int numberOfAppointmentsToCreate = 10;
 
         Stream.generate(appointmentFaker::create)
@@ -80,6 +80,28 @@ class AppointmentControllerTests {
         final AppointmentResponse[] response = httpResponse.getBody();
         Assertions.assertNotNull(response);
         Assertions.assertEquals(numberOfAppointmentsToCreate, response.length);
+    }
+
+    @Test
+    void canFindNewAppointment() {
+        final CreateAppointmentRequest request = appointmentFaker.create();
+
+        // Create a new appointment
+        final ResponseEntity<AppointmentResponse> createHttpResponse = restTemplate.postForEntity(getUrl(), request, AppointmentResponse.class);
+        Assertions.assertTrue(createHttpResponse.getStatusCode().is2xxSuccessful(), String.valueOf(createHttpResponse.getStatusCodeValue()));
+
+        final AppointmentResponse createResponse = createHttpResponse.getBody();
+        Assertions.assertNotNull(createResponse);
+        Assertions.assertNotNull(createResponse.id);
+
+        // Find the newly created appointment by its ID
+        final String findAppointmentUrl = String.format("%s/%s", getUrl(), createResponse.id);
+        final ResponseEntity<AppointmentResponse> findHttpResponse = restTemplate.getForEntity(findAppointmentUrl, AppointmentResponse.class);
+        Assertions.assertTrue(findHttpResponse.getStatusCode().is2xxSuccessful(), String.valueOf(findHttpResponse.getStatusCodeValue()));
+
+        final AppointmentResponse findResponse = findHttpResponse.getBody();
+        Assertions.assertNotNull(findResponse);
+        Assertions.assertEquals(createResponse, findResponse);
     }
 
     // TODO : Implement some negative tests to exercise @Validate
