@@ -14,5 +14,4 @@ public class LocalApplication {
             .sources(LocalApplication.class)
             .run(args);
     }
-
 }

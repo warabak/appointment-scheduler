@@ -2,11 +2,10 @@ package com.warabak.appointmentscheduler.services;
 
 import com.warabak.appointmentscheduler.entities.Appointment;
 import com.warabak.appointmentscheduler.entities.Status;
-import com.warabak.appointmentscheduler.models.CreateAppointmentRequest;
 import com.warabak.appointmentscheduler.models.AppointmentResponse;
+import com.warabak.appointmentscheduler.models.CreateAppointmentRequest;
 import com.warabak.appointmentscheduler.repos.AppointmentRepository;
 import com.warabak.appointmentscheduler.repos.StatusRepository;
-import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +24,7 @@ public class AppointmentService {
     public AppointmentResponse create(final CreateAppointmentRequest request) {
 
         // Find the requested status - if it doesn't exist, we will not move forward.
-        final Status status = statusRepository
-            .findOne(Example.of(new Status(request.status)))
-            .orElseThrow(() -> new IllegalArgumentException(String.format("Unknown status %s", request.status)));
+        final Status status = findStatus(request.status);
 
         // TODO : Ensure all datetimes are in UTC
         final Appointment appointment = new Appointment(
@@ -43,7 +40,7 @@ public class AppointmentService {
     }
 
     public List<AppointmentResponse> list() {
-        return appointmentRepository
+        return this.appointmentRepository
             .findAll()
             .stream()
             .map(AppointmentService::from)
@@ -52,10 +49,28 @@ public class AppointmentService {
 
     public AppointmentResponse find(final Long id) {
         return from(
-            appointmentRepository
+            this.appointmentRepository
                 .findById(id)
                 .orElseThrow(() -> new IllegalArgumentException(String.format("Unknown id %s", id)))
         );
+    }
+
+    public AppointmentResponse update(final Long id, final String status) {
+
+        // Find the requested appointment by ID - if it doesn't exist, we cannot update it
+        final Appointment foundAppointment = this.appointmentRepository
+            .findById(id)
+            .orElseThrow(() -> new IllegalArgumentException(String.format("Unknown id %s", id)));
+
+        foundAppointment.setStatus(findStatus(status));
+
+        return from(this.appointmentRepository.save(foundAppointment));
+    }
+
+    public Status findStatus(final String status) {
+        return this.statusRepository
+            .findOne(Example.of(new Status(status)))
+            .orElseThrow(() -> new IllegalArgumentException(String.format("Unknown status %s", status)));
     }
 
     private static AppointmentResponse from(final Appointment appointment) {
