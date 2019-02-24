@@ -1,0 +1,33 @@
+version: '2.1'
+
+services:
+  api:
+    image: nwarabak/appointment-scheduler:1.0
+    ports:
+      - 8080:8080
+    environment:
+      - "SPRING_PROFILES_ACTIVE=postgres"
+    networks:
+      - default
+    depends_on:
+      db:
+        condition: service_healthy
+  db:
+    image: debezium/postgres:10.0
+    environment:
+      - POSTGRES_USER=opensesame
+      - POSTGRES_PASSWORD=opensesame
+      - POSTGRES_DB=appointmentdb
+    ports:
+      - 5432:5432
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+
+    # https://www.postgresql.org/docs/10/app-pg-isready.html
+    # https://github.com/peter-evans/docker-compose-healthcheck
+    # https://github.com/peter-evans/docker-compose-healthcheck/blob/master/docker-compose.yml
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
