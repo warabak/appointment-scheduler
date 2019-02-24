@@ -6,6 +6,7 @@ import com.warabak.appointmentscheduler.models.AppointmentResponse;
 import com.warabak.appointmentscheduler.models.CreateAppointmentRequest;
 import com.warabak.appointmentscheduler.repos.AppointmentRepository;
 import com.warabak.appointmentscheduler.repos.StatusRepository;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,6 +80,13 @@ public class AppointmentService {
         return from(foundAppointment);
     }
 
+    public List<AppointmentResponse> search(final ZonedDateTime start, final ZonedDateTime end) {
+        return appointmentRepository.findByScheduledDateBetweenOrderByPriceDesc(start, end)
+            .stream()
+            .map(AppointmentService::from)
+            .collect(Collectors.toList());
+    }
+
     public Status findStatus(final String status) {
         return statusRepository
             .findOne(Example.of(new Status(status)))
@@ -96,6 +104,5 @@ public class AppointmentService {
             appointment.getPrice()
         );
     }
-
 
 }

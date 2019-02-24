@@ -36,6 +36,19 @@ public class AppointmentResponse {
     }
 
     @Override
+    public String toString() {
+        return "AppointmentResponse{" +
+            "id=" + id +
+            ", createdAt=" + createdAt +
+            ", scheduledDate=" + scheduledDate +
+            ", durationInMinutes=" + durationInMinutes +
+            ", doctorFullName='" + doctorFullName + '\'' +
+            ", status='" + status + '\'' +
+            ", price='" + price + '\'' +
+            '}';
+    }
+
+    @Override
     public boolean equals(final Object o) {
         if (this == o) {
             return true;

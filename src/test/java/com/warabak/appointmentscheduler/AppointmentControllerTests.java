@@ -7,6 +7,7 @@ import com.warabak.appointmentscheduler.services.AppointmentFaker;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -40,15 +41,11 @@ class AppointmentControllerTests {
     private AppointmentFaker appointmentFaker;
 
     @Test
-    void canLoadSpringContext() {
-        Assertions.assertNotNull(this.appointmentController);
-    }
-
-    @Test
     void canCreateNewAppointment() {
         final ZonedDateTime now = Instant.now().atZone(ZoneOffset.UTC);
         final CreateAppointmentRequest request = appointmentFaker.create();
 
+        // Create a new appointment
         final ResponseEntity<AppointmentResponse> httpResponse = restTemplate.postForEntity(getUrl(), request, AppointmentResponse.class);
         Assertions.assertTrue(httpResponse.getStatusCode().is2xxSuccessful(), String.valueOf(httpResponse.getStatusCodeValue()));
 
@@ -67,6 +64,7 @@ class AppointmentControllerTests {
     void canListNewAppointments() {
         final int numberOfAppointmentsToCreate = 10;
 
+        // Create 10 new random appointments
         Stream.generate(appointmentFaker::create)
             .limit(numberOfAppointmentsToCreate)
             .forEach(r -> {
@@ -74,10 +72,11 @@ class AppointmentControllerTests {
                 Assertions.assertTrue(createHttpResponse.getStatusCode().is2xxSuccessful(), String.valueOf(createHttpResponse.getStatusCodeValue()));
             });
 
-        final ResponseEntity<AppointmentResponse[]> httpResponse = restTemplate.getForEntity(getUrl(), AppointmentResponse[].class);
-        Assertions.assertTrue(httpResponse.getStatusCode().is2xxSuccessful(), String.valueOf(httpResponse.getStatusCodeValue()));
+        // Ensure we can list all 10 appointments
+        final ResponseEntity<AppointmentResponse[]> listHttpResponse = restTemplate.getForEntity(getUrl(), AppointmentResponse[].class);
+        Assertions.assertTrue(listHttpResponse.getStatusCode().is2xxSuccessful(), String.valueOf(listHttpResponse.getStatusCodeValue()));
 
-        final AppointmentResponse[] response = httpResponse.getBody();
+        final AppointmentResponse[] response = listHttpResponse.getBody();
         Assertions.assertNotNull(response);
         Assertions.assertEquals(numberOfAppointmentsToCreate, response.length);
     }
@@ -119,10 +118,42 @@ class AppointmentControllerTests {
         // Delete created appointment by its ID
         restTemplate.delete(String.format("%s/%s", getUrl(), createResponse.id));
 
-        // Find the newly created appointment by its ID
+        // Ensure we no longer can find the deleted appointment by its ID
         final String findAppointmentUrl = String.format("%s/%s", getUrl(), createResponse.id);
         final ResponseEntity<AppointmentResponse> findHttpResponse = restTemplate.getForEntity(findAppointmentUrl, AppointmentResponse.class);
         Assertions.assertTrue(findHttpResponse.getStatusCode().isError());
+    }
+
+    @Test
+    void canSearchAppointmentBetweenDates() {
+        final CreateAppointmentRequest request = appointmentFaker.create();
+
+        // Create a new appointment
+        final ResponseEntity<AppointmentResponse> createHttpResponse = restTemplate.postForEntity(getUrl(), request, AppointmentResponse.class);
+        Assertions.assertTrue(createHttpResponse.getStatusCode().is2xxSuccessful(), String.valueOf(createHttpResponse.getStatusCodeValue()));
+
+        final AppointmentResponse createResponse = createHttpResponse.getBody();
+        Assertions.assertNotNull(createResponse);
+        Assertions.assertNotNull(createResponse.id);
+
+        final ZonedDateTime start = request.scheduledDate.minus(1, ChronoUnit.HOURS);
+        final ZonedDateTime end = request.scheduledDate.plus(1, ChronoUnit.HOURS);
+
+        // Search for the newly created appointment by a start and end datetime - 1 hour in both directions
+        final String findAppointmentUrl = String.format("%s?start={start}&end={end}", getUrl());
+        final ResponseEntity<AppointmentResponse[]> searchHttpResponse = restTemplate.getForEntity(
+            findAppointmentUrl,
+            AppointmentResponse[].class,
+            start,
+            end
+        );
+
+        Assertions.assertTrue(searchHttpResponse.getStatusCode().is2xxSuccessful(), String.valueOf(searchHttpResponse.getStatusCodeValue()));
+
+        final AppointmentResponse[] searchResponse = searchHttpResponse.getBody();
+        Assertions.assertNotNull(searchResponse);
+        Assertions.assertEquals(1, searchResponse.length);
+        Assertions.assertEquals(createResponse, searchResponse[0]);
     }
 
     // TODO : Implement some negative tests to exercise @Validate
