@@ -18,3 +18,8 @@ As business rules are defined, we would want to create constraints within the da
 ### Test Coverage
 Improving the JUnit test coverage, as well as generating coverage reports would be a great next step.
 Tools like [Coveralls](https://coveralls.io/) for open-source projects are free, and would allow us to measure the breadth of our coverage as we add tests over time.
+
+### Error Handling and the User Experience
+While leaning into `javax.validation.constraints` saves us from a lot of boilerplate, there are certainly more edge cases to consider.
+Most critically, a greater focus should be placed on error conditions - helping enable the end user to work through their own problems with the API 
+makes for happy users and reduces stress on support processes like customer support and wordy technical documentation.
