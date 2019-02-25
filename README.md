@@ -237,5 +237,5 @@ curl -s -X POST http://localhost:8080/randomizer | jq .
 ```
 
 ## Further reading
-[Project next steps](docs/next-steps.md)
-[Full installation instructions](docs/installation.md)
+- [Project next steps](docs/next-steps.md)
+- [Full installation instructions](docs/installation.md)
