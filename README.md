@@ -14,19 +14,19 @@ RESTful web services for scheduling appointments
 # Quickstart
 ## How to Build
 
-### Run the following from your command line
+#### Run the following from your command line
 ```bash
 mvn clean install
 docker-compose up --detach
 ```
 
-### Verify docker-compose starts - you should see the following
+#### Verify docker-compose starts - you should see the following
 ```bash
 Starting appointment-scheduler_db_1 ... done
 Recreating appointment-scheduler_api_1 ... done
 ```
 
-### Check docker for the running container information
+#### Check docker for the running container information
 ```bash
 docker ps
 CONTAINER ID        IMAGE                                COMMAND                  CREATED             STATUS                    PORTS                    NAMES
@@ -34,7 +34,7 @@ CONTAINER ID        IMAGE                                COMMAND                
 34860ef33560        postgres:10                          "docker-entrypoint.s…"   6 minutes ago       Up 14 seconds (healthy)   0.0.0.0:5432->5432/tcp   appointment-scheduler_db_1
 ```
 
-### Verify you can query the API's health check
+#### Verify you can query the API's health check
 ```bash
 curl -S localhost:8080/health
 ```
@@ -43,7 +43,7 @@ curl -S localhost:8080/health
 {"health":"green"}
 ```
 
-## How to Use
+## APIs
 TODO
 
 ## Further reading
