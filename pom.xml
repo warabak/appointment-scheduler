@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.warabak</groupId>
     <artifactId>appointment-scheduler</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0</version>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -27,6 +27,7 @@
         <postgresql.version>42.2.5</postgresql.version>
         <flyway-core.version>5.2.4</flyway-core.version>
         <jacoco.version>0.8.3</jacoco.version>
+        <dockerfile-maven-version>1.4.10</dockerfile-maven-version>
     </properties>
 
     <dependencies>
@@ -87,37 +88,30 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-
-                <!-- Tell Spring to use RemoteApplication as our "real" production application, as opposed to LocalApplication -->
-                <configuration>
-                    <mainClass>com.warabak.appointmentscheduler.RemoteApplication</mainClass>
-                </configuration>
             </plugin>
 
+            <!-- Use Spotify's Maven Dockerfile Plugin to help manage building the image -->
+            <!-- See : https://github.com/spotify/dockerfile-maven -->
             <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>${jacoco.version}</version>
+                <groupId>com.spotify</groupId>
+                <artifactId>dockerfile-maven-plugin</artifactId>
+                <version>${dockerfile-maven-version}</version>
                 <executions>
                     <execution>
+                        <id>default</id>
                         <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>report</id>
-                        <phase>test</phase>
-                        <goals>
-                            <goal>report</goal>
+                            <goal>build</goal>
+                            <goal>push</goal>
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>org.eluder.coveralls</groupId>
-                <artifactId>coveralls-maven-plugin</artifactId>
-                <version>4.3.0</version>
+                <configuration>
+                    <repository>nwarabak/${project.artifactId}</repository>
+                    <tag>${project.version}</tag>
+                    <buildArgs>
+                        <JAR_FILE>${project.build.finalName}.jar</JAR_FILE>
+                    </buildArgs>
+                </configuration>
             </plugin>
 
         </plugins>
