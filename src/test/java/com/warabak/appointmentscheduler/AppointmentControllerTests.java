@@ -189,7 +189,8 @@ class AppointmentControllerTests {
         Assertions.assertEquals(createResponse, searchResponse[0]);
     }
 
-    // TODO : Implement some negative tests to exercise @Validate
+    // TODO : Implement negative tests to exercise @Validate
+    // TODO : Implement tests demoing lack of DB constraints
 
     private String getUrl() {
         return String.format("http://localhost:%s/appointments", this.port);

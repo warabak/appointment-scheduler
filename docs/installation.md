@@ -62,21 +62,13 @@ If all goes well, you will see the Dockerfile being built at the very end of the
 [INFO] ------------------------------------------------------------------------
 ```
 
-To run the freshly built image, using an embedded H2 database :
+To run the freshly built image using an embedded H2 database :
 
 ```bash
-docker run -p 8080:8080 -e "SPRING_PROFILES_ACTIVE=h2" nwarabak/appointment-scheduler:1.0
+docker run -p 8080:8080 -e "SPRING_PROFILES_ACTIVE=h2,random-scheduler" nwarabak/appointment-scheduler:1.0
 ```
 
-And verify you can hit the application's _/health_ endpoint
-
-```bash
-curl -S localhost:8080/health
-```
-
-```json
-{"health":"green"}
-```
+And verify you can hit the application's [/health endpoint](README.md#health)
 
 ## Docker Compose
 After building with maven, you are now free to use `docker-compose` to stand up both the Spring Boot application and a Postgres instance.
@@ -87,4 +79,4 @@ To run, simply execute :
 docker-compose up
 ```
 
-Again, verify you can hit the application's _/health_ endpoint. That's it!
+Again, verify you can hit the application's [/health endpoint](README.md#health). That's it!
