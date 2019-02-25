@@ -35,6 +35,14 @@ CONTAINER ID        IMAGE                                COMMAND                
 
 Ensure the the application is alive and happy by calling the health API.
 
+## Appointment Autogen
+You'll also notice that as the application runs, it will automatically create new appointments at random intervals. 
+This is to help exercise the endpoints without bothering with cURL / Postman / ARC / etc. while demonstrating the elegance of Spring profile composition. 
+
+If you wish to _not_ auto-create appointments, simply remove the `random-scheduler` Spring profile from `docker-compose.yml`.
+
+For more detail around this feature, please see `com.warabak.appointmentscheduler.services.RandomScheduler.java`.
+
 # APIs
 
 ## Health
